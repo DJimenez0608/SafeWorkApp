@@ -30,9 +30,7 @@ import androidx.navigation.NavController
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
 import com.example.main.CompReusable.ReusableTopAppBar
-import com.example.main.utils.theme.Blue
-import com.example.main.utils.theme.PurpleGrey40
-import com.example.main.utils.theme.Red
+import com.example.main.utils.theme.Orange
 
 @Composable
 fun EmailVerificationScreen( navController: NavController) {
@@ -43,12 +41,7 @@ fun EmailVerificationScreen( navController: NavController) {
     Scaffold (
         topBar = { ReusableTopAppBar(
             modifier = Modifier.background(
-                brush = Brush.horizontalGradient(
-                    colorStops = arrayOf(
-                        0.1f to Red,
-                        0.3f to Blue
-                    )
-                )
+                color= Orange
             ).fillMaxWidth(),
             icon = Icons.Default.ArrowBack,
             contentDescription = "Volver a inicio de sesión",

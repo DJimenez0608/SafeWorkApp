@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.main.CompReusable.ReusableButton
-import com.example.main.utils.theme.Blue
+import com.example.main.utils.theme.LightOrange
 import com.example.practica.R
 
 @Composable
@@ -66,11 +66,11 @@ fun LogInScreen (controller: NavController){
 
             Image(
                 modifier = Modifier.padding(top = 63.dp ).width(244.dp).height(279.dp),
-                painter = painterResource(id = R.drawable.log_life_srtyle),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo de safety life",
             )
             Text(
-                "SAFETY LIFE",
+                "SafeWorkApp",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = TextStyle(
@@ -106,7 +106,7 @@ fun LogInScreen (controller: NavController){
                         controller.navigate(AppScreens.EmailVerificationScreen.name)
                     },
                 style =TextStyle(
-                    color = Blue,
+                    color = LightOrange,
                     fontSize = 12.sp,
                 )
 
@@ -131,7 +131,7 @@ fun LogInScreen (controller: NavController){
                     "Registrarme",
                     style = TextStyle(
                         fontSize = 12.sp,
-                        color = Blue
+                        color = LightOrange
                     ),
                     modifier = Modifier
                         .clickable {

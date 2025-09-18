@@ -7,11 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ReusableTextField(contenido: String, value: String, onValueChange: (String) -> Unit) {
+fun ReusableTextField(enable : Boolean = true,contenido: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier.fillMaxWidth()) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         label = { Text(contenido) },
         value = value,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
+        enabled = enable
     )
 }

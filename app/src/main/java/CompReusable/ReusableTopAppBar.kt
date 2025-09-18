@@ -17,12 +17,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.main.utils.theme.Blue
-import com.example.main.utils.theme.White
+import com.example.main.utils.theme.Orange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReusableTopAppBar(textStyle: TextStyle = LocalTextStyle.current, textAlign: TextAlign? = null, modifier: Modifier = Modifier.background(color = Blue).fillMaxWidth(), title: String, contentDescription: String, icon: ImageVector, onClick: () -> Unit){
+fun ReusableTopAppBar(textStyle: TextStyle = LocalTextStyle.current, textAlign: TextAlign? = null, modifier: Modifier = Modifier.background(color = Orange).fillMaxWidth(), title: String, contentDescription: String, icon: ImageVector, onClick: () -> Unit){
     Box(
         modifier = modifier,
     ){
@@ -31,7 +30,7 @@ fun ReusableTopAppBar(textStyle: TextStyle = LocalTextStyle.current, textAlign: 
             title = {
                 Text(
                     title,
-                    color = White,
+                    color = Color.White,
                     textAlign = textAlign,
                     style = textStyle,
                     fontSize = 22.sp
@@ -47,7 +46,7 @@ fun ReusableTopAppBar(textStyle: TextStyle = LocalTextStyle.current, textAlign: 
                 ) {
                     Icon(
                         icon,
-                        tint = White,
+                        tint = Color.White,
                         contentDescription = contentDescription
                     )
                 }

@@ -53,9 +53,8 @@ import androidx.navigation.NavController
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
 import com.example.main.CompReusable.ReusableTopAppBar
-import com.example.main.utils.theme.Blue
-import com.example.main.utils.theme.Red
-import com.example.main.utils.theme.White
+import com.example.main.utils.theme.LightOrange
+import com.example.main.utils.theme.Orange
 import kotlinx.serialization.descriptors.StructureKind
 import java.lang.invoke.TypeDescriptor
 
@@ -63,7 +62,7 @@ import java.lang.invoke.TypeDescriptor
 fun SignInScreen( controller: NavController){
 
     var nombre by remember { mutableStateOf("") }
-    var apellidos by remember { mutableStateOf("") }
+    var cargo by remember { mutableStateOf("") }
     var cedula by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var celular by remember { mutableStateOf("") }
@@ -80,15 +79,8 @@ fun SignInScreen( controller: NavController){
     Scaffold (
         topBar = { ReusableTopAppBar(
             modifier = Modifier
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colorStops = arrayOf(
-                            0.1f to Red,
-                            0.3f to Blue
-                        )
-                    )
-                )
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .background(color = Orange),
             icon = Icons.Default.ArrowBack,
             contentDescription = "Volver a inicio de sesión",
             onClick = {controller.navigate(AppScreens.LogInScreen.name)},
@@ -110,9 +102,9 @@ fun SignInScreen( controller: NavController){
 
             )
             ReusableTextField(
-                contenido = "Nombre",
-                value = apellidos,
-                onValueChange = {apellidos = it}
+                contenido = "Cargo",
+                value = cargo,
+                onValueChange = {cargo = it}
 
             )
             Spacer(Modifier.height(10.dp))
@@ -200,9 +192,10 @@ fun SignInScreen( controller: NavController){
                     width = 1.dp,
                     shape = RoundedCornerShape(6.dp),
                     color = Color.Black,
-                )
+                ).background(color= LightOrange)
             ){
                 Column (
+                    modifier = Modifier.padding(3.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
                     if(image!= null){

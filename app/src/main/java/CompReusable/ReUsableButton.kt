@@ -1,5 +1,6 @@
 package com.example.main.CompReusable
 
+import android.graphics.Color
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,17 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.main.utils.theme.Blue
+import com.example.main.utils.theme.BoldOrange
 
 @Composable
-fun ReusableButton(label : String, onClick :() -> Unit, modifier : Modifier = Modifier.height(35.dp).width(122.dp)){
+fun ReusableButton(color :androidx.compose.ui.graphics.Color = BoldOrange, label : String, onClick :() -> Unit, modifier : Modifier = Modifier.height(35.dp).width(122.dp)){
     Button(
 
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Blue,
+            containerColor = color,
         ),
     ) {
         Text(

@@ -1,7 +1,7 @@
 package Navigation
 
 enum class AppScreens{
-    SplashScreen,
+
     LogInScreen,
     EmailVerificationScreen,
     RiskCodeScreen,
@@ -12,5 +12,7 @@ enum class AppScreens{
     ChangePassWordScreen,
     ProfileScreen,
     ChatScreen,
-    RiskZones
+    RiskZones,
+    PersonalChatScreen,
+
 }

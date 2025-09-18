@@ -29,9 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
-import com.example.main.utils.theme.White
 
-@Preview
 @Composable
 //nav
 fun RiskCodeScreen(controller: NavController){
@@ -42,7 +40,7 @@ fun RiskCodeScreen(controller: NavController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
 
-        modifier = Modifier.fillMaxWidth().background(color = White).fillMaxHeight().padding(35.dp)
+        modifier = Modifier.fillMaxWidth().background(color = Color.White).fillMaxHeight().padding(35.dp)
     ) {
         Text(
             "Ingrese el codigo de la zona de construcción",
