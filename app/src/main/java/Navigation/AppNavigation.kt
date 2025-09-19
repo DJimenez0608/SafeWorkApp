@@ -19,7 +19,7 @@ import com.example.main.Screens.RecoverPassword.EmailVerificationScreen
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
-    NavHost(navController= navController, startDestination = AppScreens.ProfileScreen.name){
+    NavHost(navController= navController, startDestination = AppScreens.LogInScreen.name){
 
         composable(route = AppScreens.LogInScreen.name){
             LogInScreen(navController)
