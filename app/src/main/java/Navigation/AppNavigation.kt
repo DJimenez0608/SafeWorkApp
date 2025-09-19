@@ -5,10 +5,17 @@ import PersonalChatScreen
 import Screens.LogInScreen
 import Screens.RiskCodeScreen
 import Screens.SignInScreen
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.main.Gallery_actions.GalleyScreen
+import com.example.main.Location_Actions.GPSScreen
+import com.example.main.Location_Actions.LocationScreen
+import com.example.main.Location_Actions.LocationViewModel
 import com.example.main.Screens.Menu.AddRiskZone
 import com.example.main.Screens.HomeScreen
 import com.example.main.Screens.Menu.ProfileScreen
@@ -16,11 +23,23 @@ import com.example.main.Screens.RecoverPassword.ChangePassWordScreen
 import com.example.main.Screens.RecoverPassword.CodeVerificationScreen
 import com.example.main.Screens.RecoverPassword.EmailVerificationScreen
 
+@SuppressLint("ViewModelConstructorInComposable")
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
-    NavHost(navController= navController, startDestination = AppScreens.LogInScreen.name){
+    val locationViewModel = LocationViewModel()
+    NavHost(navController= navController, startDestination = AppScreens.GPSScreen.name){
 
+        composable(route = AppScreens.GPSScreen.name){
+            GPSScreen(locationViewModel)
+        }
+        composable(route = AppScreens.LocationScreen.name){
+            LocationScreen(navController)
+        }
+        composable(route = AppScreens.GalleyScreen.name){
+            GalleyScreen(navController)
+        }
         composable(route = AppScreens.LogInScreen.name){
             LogInScreen(navController)
         }

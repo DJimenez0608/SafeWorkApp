@@ -50,6 +50,13 @@ android {
 }
 
 dependencies {
+    //CAMARA/GALERIA
+    implementation(libs.coil.compose)
+    implementation( libs.accompanist.permissions)
+    implementation (libs.androidx.activity.compose.v193)
+    //UBICACION
+    implementation(libs.play.services.location)
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
