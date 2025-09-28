@@ -57,6 +57,11 @@ dependencies {
     //UBICACION
     implementation(libs.play.services.location)
 
+    //ICONOS NUEVOS
+
+        implementation(libs.icons.lucide)
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

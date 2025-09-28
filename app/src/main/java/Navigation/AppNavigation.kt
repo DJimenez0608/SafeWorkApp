@@ -2,9 +2,9 @@ package Navigation
 
 import ChatScreen
 import PersonalChatScreen
-import Screens.LogInScreen
-import Screens.RiskCodeScreen
-import Screens.SignInScreen
+import View.LogInScreen
+import View.RiskCodeScreen
+import View.SignInScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -29,7 +29,7 @@ import com.example.main.Screens.RecoverPassword.EmailVerificationScreen
 fun AppNavigation(){
     val navController = rememberNavController()
     val locationViewModel = LocationViewModel()
-    NavHost(navController= navController, startDestination = AppScreens.GPSScreen.name){
+    NavHost(navController= navController, startDestination = AppScreens.SignInScreen.name){
 
         composable(route = AppScreens.GPSScreen.name){
             GPSScreen(locationViewModel)
