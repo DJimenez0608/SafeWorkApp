@@ -14,8 +14,6 @@ enum class AppScreens{
     ChatScreen,
     RiskZones,
     PersonalChatScreen,
-    GalleyScreen,
-    LocationScreen,
-    GPSScreen
+    GPSScreen,
 
 }
