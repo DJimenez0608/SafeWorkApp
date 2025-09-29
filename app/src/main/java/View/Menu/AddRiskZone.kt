@@ -2,6 +2,9 @@ package com.example.main.Screens.Menu
 
 import CustomCard
 import Navigation.AppScreens
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,10 +45,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
@@ -53,10 +58,33 @@ import com.example.main.CompReusable.ReusableTopAppBar
 import com.example.main.utils.theme.BoldOrange
 import com.example.main.utils.theme.LightOrange
 import com.example.main.utils.theme.Orange
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddRiskZone(navController: NavController){
+    //CAMERA PERMISSION
+    val cameraPermission = rememberPermissionState(android.Manifest.permission.CAMERA)
+
+    //CAMARA
+    var imageUriCamera by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    val cameraUri =FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        File(context.filesDir, "cameraPic.jpc")
+    )
+
+    val camera = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) {
+        if(it){
+            imageUriCamera = cameraUri
+        }
+    }
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
@@ -252,6 +280,10 @@ fun AddRiskZone(navController: NavController){
                         Text("Tomar foto", Modifier.padding(3.dp))
                         IconButton(
                             onClick = {
+                                if (cameraPermission.status.isGranted){
+                                    camera.launch(cameraUri)
+                                }
+                                cameraPermission.launchPermissionRequest()
 
                             }
                         ) {
