@@ -45,19 +45,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.composables.icons.lucide.Camera
-import com.composables.icons.lucide.Hotel
 import com.composables.icons.lucide.Lucide
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
 import com.example.main.CompReusable.ReusableTopAppBar
-import com.example.main.Location_Actions.permissionGranted
 import com.example.main.utils.theme.LightOrange
 import com.example.main.utils.theme.Orange
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import kotlinx.serialization.internal.throwMissingFieldException
 import java.io.File
 
 

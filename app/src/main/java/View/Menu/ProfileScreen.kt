@@ -44,7 +44,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
 import com.example.main.CompReusable.ReusableTopAppBar
-import com.example.main.Gallery_actions.LoadImag
 
 @Composable
 fun ProfileScreen (navController: NavController){
