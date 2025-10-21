@@ -87,4 +87,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.navigation.compose)
 
+    //openMaps
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
+
+
 }
