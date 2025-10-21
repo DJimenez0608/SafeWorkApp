@@ -1,11 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+
 }
 
 android {
     namespace = "com.example.practica"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.practica"
@@ -38,9 +41,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -77,6 +77,10 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

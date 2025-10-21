@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.CompReusable.ReusableTextField
+import com.example.main.auth
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -91,7 +92,12 @@ fun RiskCodeScreen(controller: NavController){
         ReusableButton(
             label = "Cerrar sesion",
             onClick = {
-                controller.navigate(AppScreens.LogInScreen.name)
+                auth.signOut()
+                controller.navigate(AppScreens.LogInScreen.name){
+                    popUpTo(AppScreens.RiskCodeScreen.name){
+                        inclusive = true
+                    }
+                }
             },
             modifier = Modifier.width(180.dp)
         )

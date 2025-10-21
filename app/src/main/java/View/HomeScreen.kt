@@ -43,6 +43,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -82,6 +83,7 @@ import androidx.navigation.NavController
 import com.example.main.CompReusable.CustomAlert
 import com.example.main.CompReusable.ReusableButton
 import com.example.main.ViewModel.LocationViewModel
+import com.example.main.auth
 import com.example.main.utils.theme.BoldOrange
 import com.example.main.utils.theme.LightOrange
 import com.example.main.utils.theme.Orange
@@ -434,6 +436,18 @@ fun MostrarMenu(onDismissRequest : () -> Unit, navController: NavController){
                            onClick = {navController.navigate(AppScreens.AddZoneRisk.name)}
 
                            )
+                       OpcionesMenu(
+                           contentDescription = "Cerrar sesión",
+                           imageVector = Default.ExitToApp,
+                           onClick = { auth.signOut()
+                               navController.navigate(AppScreens.LogInScreen.name){
+                                   popUpTo(AppScreens.HomeScreen.name){
+                                       inclusive = true
+                                   }
+                               }
+                           }
+
+                       )
                    }
 
                 }

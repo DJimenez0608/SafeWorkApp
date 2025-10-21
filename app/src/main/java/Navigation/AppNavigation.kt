@@ -19,17 +19,19 @@ import com.example.main.Screens.Menu.ProfileScreen
 import com.example.main.Screens.RecoverPassword.ChangePassWordScreen
 import com.example.main.Screens.RecoverPassword.CodeVerificationScreen
 import com.example.main.Screens.RecoverPassword.EmailVerificationScreen
+import com.example.main.View.SplashScreen
 
 @SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
-    NavHost(navController= navController, startDestination = AppScreens.LogInScreen.name){
+    NavHost(navController= navController, startDestination = AppScreens.SplashScreen.name){
 
 
-
-
+        composable(route = AppScreens.SplashScreen.name){
+            SplashScreen(navController)
+        }
         composable(route = AppScreens.LogInScreen.name){
             LogInScreen(navController)
         }

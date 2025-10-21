@@ -2,51 +2,28 @@ package com.example.main.ViewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.main.Model.User
+import com.example.main.Model.UserAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class  UserState (
-    val user : User?= null,
-    val isLoading : Boolean = false,
-    val error : String? = null,
-)
-
-
-class UserViewModel : ViewModel() {
-    private val _uiUserState = MutableStateFlow(UserState())
-
-    val uiUserState : StateFlow<UserState> = _uiUserState
-
-    init {
-        _uiUserState.value = UserState(
-            user = User(
-                nombre = "Nombre no registrado",
-                id = 0,
-                foto = ""
-            )
-        )
+class UserAuthViewModel : ViewModel() {
+    val _user = MutableStateFlow<UserAuth>(UserAuth())
+    val user = _user.asStateFlow()
+    fun updateEmailClass(newEmail: String) {
+        _user.value = _user.value.copy(email = newEmail)
     }
 
-    //ACTUALIZAR INFORMACION
-    fun actualizarNombre(nuevoNombre : String){
-        _uiUserState.update { currentState->
-            currentState.copy(
-                user = currentState.user?.copy(
-                    nombre = nuevoNombre
-                )
-            )
-        }
+    fun updatePassClass(newPass: String) {
+        _user.value = _user.value.copy(password = newPass)
     }
 
-    fun actualizarFotoPerfil (nuevaFoto : String){
-        _uiUserState.update { currentState->
-            currentState.copy(
-                user = currentState.user?.copy(
-                    foto = nuevaFoto
-                )
-            )
-        }
+    fun updateEmailError(error: String) {
+        _user.value = _user.value.copy(emailError = error)
+    }
+
+    fun updatePassError(error: String) {
+        _user.value = _user.value.copy(passError = error)
     }
 }
