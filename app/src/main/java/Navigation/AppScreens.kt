@@ -1,7 +1,6 @@
 package Navigation
 
 enum class AppScreens{
-
     LogInScreen,
     EmailVerificationScreen,
     RiskCodeScreen,
@@ -15,5 +14,5 @@ enum class AppScreens{
     RiskZones,
     PersonalChatScreen,
     GPSScreen,
-
+    WorkerMap, // <-- NUEVA RUTA
 }

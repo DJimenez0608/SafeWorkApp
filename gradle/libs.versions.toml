@@ -2,7 +2,7 @@
 accompanistPermissions = "0.37.3"
 activityComposeVersion = "1.9.3"
 activityKtxVersion = "1.8.0"
-agp = "8.6.0"
+agp = "8.11.2"
 appcompat = "1.7.1"
 coilCompose = "2.4.0"
 fragmentKtx = "1.8.9"

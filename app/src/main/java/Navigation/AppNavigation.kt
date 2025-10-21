@@ -23,6 +23,7 @@ import com.example.main.Screens.Menu.ProfileScreen
 import com.example.main.Screens.RecoverPassword.ChangePassWordScreen
 import com.example.main.Screens.RecoverPassword.CodeVerificationScreen
 import com.example.main.Screens.RecoverPassword.EmailVerificationScreen
+import com.example.main.Screens.Menu.WorkerMapScreen // <-- IMPORT NUEVO
 
 @SuppressLint("ViewModelConstructorInComposable")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -31,8 +32,6 @@ fun AppNavigation(){
     val navController = rememberNavController()
     val locationViewModel = LocationViewModel()
     NavHost(navController= navController, startDestination = AppScreens.LogInScreen.name){
-
-
 
         composable(route = AppScreens.GPSScreen.name){
             GPSScreen(locationViewModel)
@@ -73,7 +72,9 @@ fun AppNavigation(){
         composable(route = AppScreens.PersonalChatScreen.name){
             PersonalChatScreen(navController)
         }
-
+        // ------- NUEVA RUTA: MAPA DEL TRABAJADOR -------
+        composable(route = AppScreens.WorkerMap.name){
+            WorkerMapScreen()
+        }
     }
 }
-

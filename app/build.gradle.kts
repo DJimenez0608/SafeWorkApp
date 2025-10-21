@@ -50,19 +50,25 @@ android {
 }
 
 dependencies {
-    //CAMARA/GALERIA
+    // ---- CÁMARA / GALERÍA ----
     implementation(libs.coil.compose)
-    implementation( libs.accompanist.permissions)
-    implementation (libs.androidx.activity.compose.v193)
-    //UBICACION
+    implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.activity.compose.v193)
+
+    // ---- UBICACIÓN (Fused Location) ----
     implementation(libs.play.services.location)
 
-    //ICONOS NUEVOS
+    // ---- GOOGLE MAPS (AÑADIDO) ----
+    implementation("com.google.maps.android:maps-compose:4.4.1")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
 
-        implementation(libs.icons.lucide)
+    // ---- COROUTINES para Flow (AÑADIDO) ----
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
+    // ---- ICONOS NUEVOS ----
+    implementation(libs.icons.lucide)
 
-
+    // ---- ANDROIDX / COMPOSE ----
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -73,11 +79,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.foundation.layout.android)
-//drawer
+
+    // Drawer / foundation (evita duplicados)
     implementation(libs.material3)
     implementation(libs.androidx.foundation.layout.android)
-    implementation(libs.androidx.foundation.layout.android)
 
+    // ---- TESTS ----
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,6 +92,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.navigation.compose)
 
+    // ---- Navigation ----
+    implementation(libs.androidx.navigation.compose)
 }
