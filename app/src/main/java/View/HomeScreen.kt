@@ -1,7 +1,6 @@
 package com.example.main.Screens
 
 import Navigation.AppScreens
-import View.LogInScreen
 import com.example.practica.R
 
 import android.Manifest
@@ -10,13 +9,16 @@ import android.Manifest
 import android.content.Context
 import android.content.Context.SENSOR_SERVICE
 import android.content.pm.PackageManager
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.Image
+import android.location.Geocoder
 import android.media.MediaPlayer
 import android.os.Looper
+import android.os.StrictMode
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.BorderStroke
@@ -39,29 +41,35 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Default
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,6 +81,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +101,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import kotlinx.coroutines.NonCancellable.key
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.tileprovider.tilesource.XYTileSource
@@ -100,6 +108,11 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
+import androidx.core.graphics.toColorInt
+import com.google.android.gms.maps.model.LatLng
+import org.osmdroid.bonuspack.routing.OSRMRoadManager
+import org.osmdroid.bonuspack.routing.RoadManager
+
 
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,6 +120,11 @@ import org.osmdroid.views.overlay.Polygon
 fun HomeScreen (navController: NavController, viewModel: LocationViewModel = viewModel ()) {
     val context = LocalContext.current
     val locationState by viewModel.location.collectAsState()
+
+    var isSearching by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    val searchMarkers = remember { mutableStateListOf<GeoPoint>() }
+    var mostrarRuta by remember { mutableStateOf(false) }
 
     //Map Theme
     var mapMode by remember{mutableStateOf<OnlineTileSourceBase>(TileSourceFactory.MAPNIK)}
@@ -148,7 +166,7 @@ fun HomeScreen (navController: NavController, viewModel: LocationViewModel = vie
 
     //Empezar y parar actualizacion de localización
      fun startLocationUpdates() {
-        if(ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED){
             locationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         }
@@ -160,6 +178,7 @@ fun HomeScreen (navController: NavController, viewModel: LocationViewModel = vie
     // PELIGROSO
     var movimientoPeligroso by remember { mutableStateOf(false) }
     var temperaturaPeligrosa by remember { mutableStateOf(false) }
+    var pressurePeligroso by remember { mutableStateOf(false) }
 
     //¿QUE PASA CUANDO EL SENSOR DE LUZ/TEMPERATURA/MOVIMIENTO DETECTAN UN CAMBIO
     val sensorListener = object : SensorEventListener {
@@ -195,6 +214,17 @@ fun HomeScreen (navController: NavController, viewModel: LocationViewModel = vie
                     movimientoPeligroso = true
                     Log.i("Alerta de movimiento", "$magnitude")
                 }
+            }
+            if(event?.sensor?.type == Sensor.TYPE_PRESSURE){
+                val presion = event.values[0]
+
+
+
+                if (presion < 720 || presion > 800) {
+                    pressurePeligroso = true
+                } else if (presion in 720f..790f) {
+                    pressurePeligroso = false
+                }
 
 
             }
@@ -203,49 +233,29 @@ fun HomeScreen (navController: NavController, viewModel: LocationViewModel = vie
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    //AL ENTRAR AL COMPOSE SESUBSCRIBE A LOS SENSORES/ESTA ACTUALIZANDO LA UBICACION
-    DisposableEffect(key) {
-        startLocationUpdates()
-        val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
-        val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
-        val temperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
-        val acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
-        temperature?.let{
-            sensorManager.registerListener(
-                sensorListener,
-                temperature,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
+    //Ruta
+    val roadManager = OSRMRoadManager(context,"ANDROID")
+    val geocoder = remember { Geocoder(context) }
+    //Convertir texto en localizacoin
+    fun findLocation(address : String): LatLng?{
+        val addresses = geocoder.getFromLocationName(address, 2)
+        if(addresses != null && !addresses.isEmpty()){
+            val addr = addresses[0]
+            val location = LatLng(addr.
+            latitude, addr.
+            longitude)
+            return location
         }
-        lightSensor?.let{
-            sensorManager.registerListener(
-                sensorListener,
-                lightSensor,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
-        }
-        lightSensor?.let{
-            sensorManager.registerListener(
-                sensorListener,
-                acelerometro,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
-        }
-
-        //AL SALIR SE DES-SUBSCRIBE Y PARA DE ACTUALIZAR
-
-        onDispose {
-            stopLocationUpdates()
-            sensorManager.unregisterListener(sensorListener)
-        }
-
+        return null
     }
 
 
-
-
-var mostrarMenu by remember { mutableStateOf(false) }
+    val circleDrawable = ShapeDrawable(OvalShape()).apply {
+        intrinsicHeight = 50
+        intrinsicWidth = 50
+        paint.color = "#2695D3".toColorInt()
+    }
+    var mostrarMenu by remember { mutableStateOf(false) }
 
     BottomSheetScaffold(
         sheetContent = {SheetContent()},
@@ -266,9 +276,64 @@ var mostrarMenu by remember { mutableStateOf(false) }
 
 
     )  { innerPadding ->
+        val context = LocalContext.current
+        //AL ENTRAR AL COMPOSE SESUBSCRIBE A LOS SENSORES/ESTA ACTUALIZANDO LA UBICACION
+        DisposableEffect(Unit) {
+            startLocationUpdates()
+            val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
+            val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+            val temperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
+            val acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+            val pressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE)
+
+
+            //Route
+            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+
+            temperature?.let{
+                sensorManager.registerListener(
+                    sensorListener,
+                    temperature,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            }
+            pressure?.let{
+                sensorManager.registerListener(
+                    sensorListener,
+                    pressure,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            }
+            lightSensor?.let{
+                sensorManager.registerListener(
+                    sensorListener,
+                    lightSensor,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            }
+            acelerometro?.let{
+                sensorManager.registerListener(
+                    sensorListener,
+                    acelerometro,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            }
+
+
+            //AL SALIR SE DES-SUBSCRIBE Y PARA DE ACTUALIZAR
+
+            onDispose {
+                stopLocationUpdates()
+                sensorManager.unregisterListener(sensorListener)
+            }
+
+        }
         Box(
             modifier = Modifier.padding(innerPadding),
         ) {
+
+
             if (movimientoPeligroso){
                 MovementAlertDialog(
                     onConfirm = {movimientoPeligroso = false},
@@ -283,6 +348,14 @@ var mostrarMenu by remember { mutableStateOf(false) }
                     image = painterResource(R.drawable.temperatura),
                     nombreRiesgo = "Temperatura peligrosa",
                     descripcionRiesgo = "Se detectaron temperaturas extremas. Porfavor confirmar que todo esta bien"
+                )
+            }
+            if (pressurePeligroso){
+                MovementAlertDialog(
+                    onConfirm = {pressurePeligroso = false},
+                    image = painterResource(R.drawable.presion),
+                    nombreRiesgo = "Presion peligrosa",
+                    descripcionRiesgo = "Se detectaron una presion inusual. Porfavor confirmar que todo esta bien"
                 )
             }
             if (mostrarMenu){
@@ -306,42 +379,122 @@ var mostrarMenu by remember { mutableStateOf(false) }
                     val startPoint = (GeoPoint(locationState.latitude,locationState.longitude))
                     mapView.controller.setCenter(startPoint)
 
-                    //ZONA DELIMITADA
-                    val poligono = Polygon(mapView)
-                    poligono.title = "Zona de construcción"
-                    poligono.points =  listOf<GeoPoint>(
+                    //Marcador de busqueda
+                    val newLocationMarker = Marker(mapView)
+
+                    //ZONA 1 DELIMITADA
+                    val zona1 = Polygon(mapView)
+                    zona1.title = "Zona 1 de construcción"
+                    zona1.points =  listOf(
                         GeoPoint(4.635378, -74.100595), // Punto A
                         GeoPoint(4.637388, -74.097719), // Punto B
                         GeoPoint(4.630915, -74.093184), // Punto C
                         GeoPoint(4.629631, -74.094901)
                     )
-                    poligono.fillColor =  android.graphics.Color.argb(128, 255, 255, 0)
-                    poligono.strokeColor = android.graphics.Color.RED
-                    poligono.strokeWidth = 1f
-                    mapView.overlays.add(poligono)
+                    zona1.fillColor =  android.graphics.Color.argb(128, 255, 255, 0)
+                    zona1.strokeColor = android.graphics.Color.RED
+                    zona1.strokeWidth = 1f
+                    mapView.overlays.add(zona1)
+
 
 
                     //MARKER USUARIO
                     val marker = Marker(mapView)
                     marker.position = startPoint
+                    marker.icon = circleDrawable
                     marker.title = "Bogota"
                     mapView.overlays.add(marker)
 
+                    //Marcador de busqueda
+                    if(searchMarkers.isNotEmpty() && mostrarRuta){
+
+                        newLocationMarker.position = searchMarkers.first()
+                        newLocationMarker.title = searchQuery
+                        mapView.overlays.add(newLocationMarker)
+                        mapView.controller.setCenter(searchMarkers.first())
+                        mapView.controller.setZoom(18.0)
+
+                        //ROUTE
+
+                            val points = arrayListOf(startPoint, searchMarkers.first())
+                            val road = roadManager.getRoad(points)
+                            val roadOverlay = RoadManager.buildRoadOverlay(road)
+                        roadOverlay?.getOutlinePaint()?.strokeWidth = 10F
+                            mapView.controller.setZoom(14.0)
+                            mapView.overlays.add(roadOverlay)
+
+                    }else {
+                        mapView.controller.setZoom(18.0)
+                        mapView.controller.setCenter(startPoint)
+                    }
+
+
+
 
                     //RECENTRAR USUARIO
-                    if(mapSetCenter == true){
+                    if(mapSetCenter){
                         mapView.controller.setCenter(startPoint)
                         mapSetCenter = false
                     }
 
                 }
             )
-
-
             Column(
                 modifier = Modifier.padding(10.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+
+                Row{
+                    FloatingActionButton(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(50.dp),
+                        shape = FloatingActionButtonDefaults.largeShape,
+                        containerColor = BoldOrange,
+                        onClick = { isSearching = !isSearching
+                        mostrarRuta = !mostrarRuta
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isSearching) Default.Close else Default.Search,
+                            contentDescription = "Buscar",
+                            tint = Color.White
+                        )
+                    }
+                    // Barra de búsqueda animada
+                    if (isSearching) {
+
+                            TextField(
+                                value = searchQuery,
+                                onValueChange = { searchQuery = it },
+                                placeholder = { Text("Buscar zona o dirección") },
+                                singleLine = true,
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = LightOrange,
+                                    unfocusedContainerColor = LightOrange,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
+
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(
+                                    onSearch = {
+                                        val location = findLocation(searchQuery)
+                                        location?.let {
+                                            searchMarkers.clear()
+                                            searchMarkers.add(GeoPoint(location.latitude, location.longitude))
+                                        }
+                                    }
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp),
+                                shape = RoundedCornerShape(20.dp),
+                            )
+
+
+                    }
+                }
                 FloatingActionButton(
                     modifier = Modifier
                         .width(50.dp)
@@ -368,7 +521,7 @@ var mostrarMenu by remember { mutableStateOf(false) }
                     containerColor = BoldOrange,
                     onClick = {
                         //Aca la idea es que se re-ubique en la posicion en la que esta usuario actual
-                   mapSetCenter =true
+                        mapSetCenter =true
 
                     },
                 ) {
@@ -379,9 +532,6 @@ var mostrarMenu by remember { mutableStateOf(false) }
                     )
                 }
             }
-
-
-
         }
     }
 }
@@ -438,7 +588,7 @@ fun MostrarMenu(onDismissRequest : () -> Unit, navController: NavController){
                            )
                        OpcionesMenu(
                            contentDescription = "Cerrar sesión",
-                           imageVector = Default.ExitToApp,
+                           imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                            onClick = { auth.signOut()
                                navController.navigate(AppScreens.LogInScreen.name){
                                    popUpTo(AppScreens.HomeScreen.name){
@@ -493,7 +643,7 @@ val trabajadoresList = listOf(
     "José Manuel Torres Cárdenas" ,
     "Juan Esteban Morales Ríos",
     )
-    var peligrosList = listOf(
+    val peligrosList = listOf(
         "Caidas de altura",
         "Golpes por objetos (movimiento/caida)",
         "Atrapamiento (maquinaria/excavacion/estructuras)",
@@ -523,8 +673,8 @@ val trabajadoresList = listOf(
         Row (
             Modifier.background(shape = RoundedCornerShape(15), color = Color.LightGray)
         ){
-            var colorTrabajadores = if (trabajadores){Orange}else{Color.LightGray}
-            var colorPeligros = if (peligros){Orange}else{Color.LightGray}
+            val colorTrabajadores = if (trabajadores){Orange}else{Color.LightGray}
+            val colorPeligros = if (peligros){Orange}else{Color.LightGray}
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -576,7 +726,7 @@ val trabajadoresList = listOf(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                if(trabajadores && peligros == false){
+                if(trabajadores && !peligros){
                     items(trabajadoresList){trabajador->
                         Spacer(Modifier.height(15.dp))
                         Row (
@@ -603,7 +753,7 @@ val trabajadoresList = listOf(
 
                                 ){
                                 Icon(
-                                    imageVector = Icons.Default.Person,
+                                    imageVector = Default.Person,
                                     contentDescription = "",
                                     modifier = Modifier.padding(4.dp)
                                 )

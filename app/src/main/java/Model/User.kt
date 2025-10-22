@@ -10,10 +10,8 @@ data class UserAuth(
 
 data class UserDB(
     val nombre : String = "",
-    val apellido : String = "",
     val authID : String = "",
     val cargo : String = "",
-    val email : String = "",
     val celular : Int = 0,
     val fotoPerfil: String = "",
     val cedula : Int = 0,

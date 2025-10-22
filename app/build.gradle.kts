@@ -81,6 +81,8 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.play.services.maps)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -93,6 +95,8 @@ dependencies {
 
     //openMaps
     implementation("org.osmdroid:osmdroid-android:6.1.20")
+    //Rutas
+    implementation("com.github.MKergall:osmbonuspack:6.9.0")
 
 
 }

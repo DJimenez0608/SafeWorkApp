@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import org.osmdroid.config.Configuration
 val auth: FirebaseAuth = FirebaseAuth.getInstance()
+val USERS = "users/"
 class MainActivity : ComponentActivity(){
     @SuppressLint("ServiceCast")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
